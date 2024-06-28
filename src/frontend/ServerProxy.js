@@ -95,9 +95,15 @@
       return success;
   }
 
+
   if (id.length > 0) {
-      await fetch(`${URL}/update?id=${id}&priority=${priority}`, { 
+      let t = `{"id": "${id}", "priority": "${priority}" }`;
+      await fetch(`${URL}/update`, { 
         method: 'PUT', 
+        headers: {
+          "Content-Type": "application/json",
+        },  
+        body: t,
       })
       .then(response => {
         if (response.status === 200) {

@@ -62,25 +62,26 @@ async function deleteRecentFromDB(response, id) {
 /**
  * Asynchronously updates a Curve Fitter task.
  */
-async function updateRecentFromDB(response, id, isPriority) {
-  console.log ('chaning to :', isPriority);
-  if (id == undefined || id === null) {
+async function updateRecentFromDB(response, data) {
+  let d = JSON.parse(JSON.stringify(data));
+  if (d.id == undefined || d.id === null) {
     response.writeHead(400, headerFields);
     response.write("<h1>Incorrect recent information</h1>");
     response.end();
   } else {
-      db.loadRecent(id)
+      db.loadRecent(d.id)
       .then(doc => {
-        doc.task.priority=isPriority;
+        doc.task.priority=d.priority;
         db.modifyRecent(doc)
         response.writeHead(200, headerFields);
-        response.write(`modified with success: ${id}`)
+        response.write(`modified with success: ${d.id}`)
         response.end();
         })
         .catch (err => {
-          response.writeHead(500, '{ "Content-Type": "text/html" }');
+          response.writeHead(500, headerFields);
+          response.write("<h1>Internal Server Error</h1>", err);
           response.end();
-        });
+          });
   }
 }
 
@@ -116,7 +117,7 @@ const MethodNotAllowedHandler = async (request, response) => {
 app
   .route("/update")
   .put(async (request, response) => {
-    updateRecentFromDB(response, request.query.id, request.query.priority)
+    updateRecentFromDB(response, request.body)
   })
   .all(MethodNotAllowedHandler);
 
