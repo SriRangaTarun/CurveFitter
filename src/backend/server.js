@@ -5,16 +5,18 @@
 import express from "express";
 import logger from "morgan";
 import * as db from "./db.js";
+import cors from "cors";
 
 const app = express();
+const corsConiguration = cors();
 const port = 3000;
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.static('src/frontend'))
 app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 
 const headerFields = { "Content-Type": "text/json" };
-
 
 /**
  * Asynchronously creates a Curve Fitter task.
